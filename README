@@ -1,0 +1,59 @@
+# TeamDock - SaaS Platform
+
+A full-stack SaaS platform that allows admins and managers to manage employees, assign roles, and organize company structure efficiently.
+
+---
+
+## Tech Stack
+
+### Frontend:
+- **React (Vite)** – Fast and modern React tooling.
+- **Tailwind CSS** – Utility-first CSS framework for rapid UI styling.
+- **React Icons** – Used for clean and accessible iconography.
+- **Axios** – Handles HTTP requests to the backend API.
+
+### Backend:
+- **Node.js + Express** – RESTful API server.
+- **MongoDB Atlas** – Cloud-based NoSQL database.
+- **Mongoose** – ODM for MongoDB to define schemas/models.
+- **JWT (jsonwebtoken)** – Used for secure authentication.
+- **bcryptjs** – Password hashing.
+
+### Deployment:
+- **Render** – Hosts the backend API.
+- **Vercel** – Hosts the frontend (React app).
+- **MongoDB Atlas** – Remote database for persistent storage.
+
+---
+
+## Development Approach
+
+- **MERN Stack** was selected to enable fast, flexible development using JavaScript across both frontend and backend.
+- **Role-based access control** is implemented using middleware (`protect`, `admin`) to restrict routes appropriately.
+- **Modular design**: Each route, controller, and model is structured cleanly for scalability.
+- **Reusable Axios instance** is configured with interceptors to handle auth tokens and errors globally.
+- **Form handling** is done via controlled components in React with basic validation.
+
+---
+
+## Key Decisions
+
+- **Tailwind CSS** was chosen for styling to enable fast, consistent UI without writing custom CSS.
+- **Render** was selected over Heroku for the backend due to generous free tier and automatic GitHub deployments.
+- **Vercel** was chosen for the frontend due to its seamless integration with React and automatic CI/CD.
+- Environment variables (`VITE_API_URL`, `MONGO_URI`, `JWT_SECRET`) are configured securely per deployment platform.
+
+## Features
+
+- User Authentication (Login/Register)
+- Role-based access (Employee, Manager, Admin)
+- Add/Edit/Delete Employees
+- Form validations
+- Protected Routes
+- Responsive UI
+
+---
+
+## Status
+
+✅ MVP complete and deployed  
