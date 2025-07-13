@@ -14,7 +14,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post('/auth/login', form);
-      localStorage.setItem('token', res.data.token);
+      //localStorage.setItem('token', res.data.token);
       const profile = await axios.get('/auth/me');
       setUser(profile.data);
       navigate('/dashboard');
