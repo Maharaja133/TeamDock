@@ -1,7 +1,11 @@
 import { NavLink } from 'react-router-dom';
 import { FaHome, FaUsers, FaTasks, FaCog } from 'react-icons/fa';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
-const Sidebar = ({ isOpen, isMobile }) => {
+const Sidebar = ({ isOpen, setIsOpen, isMobile }) => {
+  const { user } = useContext(AuthContext);
+
   const navItemStyle = ({ isActive }) =>
     `flex items-center px-4 py-3 rounded-lg transition-colors ${
       isActive 
@@ -34,10 +38,15 @@ const Sidebar = ({ isOpen, isMobile }) => {
             <FaHome className="mr-3" />
             <span>Home</span>
           </NavLink>
-          <NavLink to="/dashboard/employees" className={navItemStyle} onClick={handleNavClick}>
-            <FaUsers className="mr-3" />
-            <span>Employees</span>
-          </NavLink>
+
+          {/* 4. The link is now safely wrapped in the role check! */}
+          {user?.role === 'admin' && (
+            <NavLink to="/dashboard/employees" className={navItemStyle} onClick={handleNavClick}>
+              <FaUsers className="mr-3" />
+              <span>Employees</span>
+            </NavLink>
+          )}
+
           <NavLink to="/dashboard/tasks" className={navItemStyle} onClick={handleNavClick}>
             <FaTasks className="mr-3" />
             <span>Tasks</span>
@@ -52,7 +61,7 @@ const Sidebar = ({ isOpen, isMobile }) => {
       {isOpen && isMobile && (
         <div 
           className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
-          onClick={() => setIsSidebarOpen(false)}
+          onClick={() => setIsOpen(false)}
         />
       )}
     </>

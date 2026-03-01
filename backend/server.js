@@ -24,12 +24,7 @@ const allowedOrigins = [
 
 app.use(
   cors({
-    origin: (origin, cb) => {
-      if (!origin) return cb(null, true);
-      return allowedOrigins.includes(origin)
-        ? cb(null, true)
-        : cb(new Error('Not allowed by CORS'));
-    },
+    origin: allowedOrigins,
     credentials: true
   })
 );

@@ -1,14 +1,9 @@
+// src/api/axios.js (or wherever your instance is)
 import axios from 'axios';
 
 const instance = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}/api`,
-  withCredentials: true
-});
-
-instance.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
+  withCredentials: true // This automatically attaches the httpOnly cookie
 });
 
 export default instance;
