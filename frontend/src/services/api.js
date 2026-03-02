@@ -1,9 +1,10 @@
-// src/api/axios.js (or wherever your instance is)
+// src/api/axios.js
 import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api`,
-  withCredentials: true // This automatically attaches the httpOnly cookie
+  // Point directly to the Vercel proxy route, not the external URL
+  baseURL: '/api', 
+  withCredentials: true 
 });
 
 export default instance;

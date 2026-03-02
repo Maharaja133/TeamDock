@@ -112,7 +112,7 @@ const Login = () => {
                 <input
                   type="password"
                   id="password"
-                  className="w-full p-3 border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full p-3 border border-indigo-200 rounded-lg focus:ring-2 text-gray-900 focus:ring-indigo-500 focus:border-transparent"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   required
