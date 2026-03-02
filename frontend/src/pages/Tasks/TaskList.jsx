@@ -8,10 +8,20 @@ const TaskList = () => {
   const [selected, setSelected] = useState(null);
   const [open, setOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // 1. Add a loading state, default to true since we fetch immediately
+  const [loading, setLoading] = useState(true);
 
   const fetchTasks = async () => {
-    const { data } = await axios.get('/tasks');
-    setTasks(data);
+    setLoading(true); // Ensure loading is true when we start fetching
+    try {
+      const { data } = await axios.get('/tasks');
+      setTasks(data);
+    } catch (error) {
+      console.error("Failed to fetch tasks", error);
+    } finally {
+      setLoading(false); // 2. Turn off loading when the request finishes (success or fail)
+    }
   };
 
   useEffect(() => { fetchTasks(); }, []);
@@ -100,7 +110,7 @@ const TaskList = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button 
                       onClick={() => handleEdit(task)}
-                      className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1"
+                      className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1 ml-auto"
                     >
                       <FaEdit className="text-sm" />
                       <span>Edit</span>
@@ -113,12 +123,20 @@ const TaskList = () => {
         </div>
       </div>
 
-      {filteredTasks.length === 0 && (
-        <div className="bg-white rounded-xl p-8 text-center mt-4">
+      {/* 3. Show Loading State */}
+      {loading && (
+        <div className="bg-white rounded-xl p-8 text-center mt-4 shadow-sm">
+          <p className="text-indigo-600 animate-pulse font-medium">Fetching tasks...</p>
+        </div>
+      )}
+
+      {/* 4. Only show "No tasks found" if NOT loading AND array is empty */}
+      {!loading && filteredTasks.length === 0 && (
+        <div className="bg-white rounded-xl p-8 text-center mt-4 shadow-sm">
           <p className="text-indigo-600">No tasks found</p>
           <button 
             onClick={handleAdd}
-            className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
+            className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow-sm"
           >
             Create Your First Task
           </button>

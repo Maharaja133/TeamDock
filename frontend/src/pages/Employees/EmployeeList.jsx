@@ -9,9 +9,12 @@ const EmployeeList = () => {
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
+  // 1. Added loading state
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchEmployees = async () => {
+    setLoading(true); // Ensure loading is true when starting fetch
     try {
       setError(null);
       const res = await axios.get('/employees');
@@ -22,6 +25,8 @@ const EmployeeList = () => {
       } else {
         setError("An error occurred while fetching employees.");
       }
+    } finally {
+      setLoading(false); // 2. Turn off loading when finished
     }
   };
 
@@ -105,99 +110,114 @@ const EmployeeList = () => {
         </div>
       ) : (
         <>
-          <div className="hidden md:block bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-indigo-100">
-                <thead className="bg-indigo-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">Name</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">Email</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">Position</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">Role</th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-indigo-100">
-                  {filteredEmployees.map(emp => (
-                    <tr key={emp._id} className="hover:bg-indigo-50 transition">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-900">
-                        {emp.role === 'admin' && <FaUserShield className="inline mr-2 text-red-500" />}
-                        {emp.name}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">{emp.email}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">{emp.position || '-'}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(emp.role)}`}>
-                          {getRoleIcon(emp.role)}
-                          {emp.role}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button 
-                          onClick={() => handleEdit(emp)}
-                          className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1 ml-auto"
-                        >
-                          <FaEdit className="text-sm" />
-                          <span>Edit</span>
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div className="md:hidden space-y-4">
-            {filteredEmployees.map(emp => (
-              <div key={emp._id} className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-bold text-indigo-900">
-                      {emp.role === 'admin' && <FaUserShield className="inline mr-2 text-red-500" />}
-                      {emp.name}
-                    </h3>
-                    <div className="flex items-center gap-2 mt-1 text-sm text-indigo-600">
-                      <FaEnvelope className="text-indigo-400" />
-                      <span>{emp.email}</span>
+          {/* 3. Render Loading State First */}
+          {loading ? (
+             <div className="bg-white rounded-xl p-8 text-center mt-4 shadow-sm">
+               <p className="text-indigo-600 animate-pulse font-medium">Fetching employees...</p>
+             </div>
+          ) : (
+            <>
+              {/* Only render tables/cards if we have data to show */}
+              {filteredEmployees.length > 0 && (
+                <>
+                  <div className="hidden md:block bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full divide-y divide-indigo-100">
+                        <thead className="bg-indigo-50">
+                          <tr>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">Name</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">Email</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">Position</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-indigo-700 uppercase tracking-wider">Role</th>
+                            <th className="px-6 py-3 text-right text-xs font-medium text-indigo-700 uppercase tracking-wider">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-indigo-100">
+                          {filteredEmployees.map(emp => (
+                            <tr key={emp._id} className="hover:bg-indigo-50 transition">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-900">
+                                {emp.role === 'admin' && <FaUserShield className="inline mr-2 text-red-500" />}
+                                {emp.name}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">{emp.email}</td>
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-600">{emp.position || '-'}</td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(emp.role)}`}>
+                                  {getRoleIcon(emp.role)}
+                                  {emp.role}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <button 
+                                  onClick={() => handleEdit(emp)}
+                                  className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1 ml-auto"
+                                >
+                                  <FaEdit className="text-sm" />
+                                  <span>Edit</span>
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
-                  <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(emp.role)}`}>
-                    {getRoleIcon(emp.role)}
-                    {emp.role}
-                  </span>
-                </div>
-                
-                {emp.position && (
-                  <div className="flex items-center gap-2 mt-3 text-sm text-indigo-600">
-                    <FaBriefcase className="text-indigo-400" />
-                    <span>{emp.position}</span>
+
+                  <div className="md:hidden space-y-4">
+                    {filteredEmployees.map(emp => (
+                      <div key={emp._id} className="bg-white rounded-xl shadow-sm p-4 hover:shadow-md transition">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h3 className="font-bold text-indigo-900">
+                              {emp.role === 'admin' && <FaUserShield className="inline mr-2 text-red-500" />}
+                              {emp.name}
+                            </h3>
+                            <div className="flex items-center gap-2 mt-1 text-sm text-indigo-600">
+                              <FaEnvelope className="text-indigo-400" />
+                              <span>{emp.email}</span>
+                            </div>
+                          </div>
+                          <span className={`px-2 py-1 text-xs rounded-full ${getRoleColor(emp.role)}`}>
+                            {getRoleIcon(emp.role)}
+                            {emp.role}
+                          </span>
+                        </div>
+                        
+                        {emp.position && (
+                          <div className="flex items-center gap-2 mt-3 text-sm text-indigo-600">
+                            <FaBriefcase className="text-indigo-400" />
+                            <span>{emp.position}</span>
+                          </div>
+                        )}
+                        
+                        <div className="flex justify-end mt-4">
+                          <button 
+                            onClick={() => handleEdit(emp)}
+                            className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1 text-sm"
+                          >
+                            <FaEdit className="text-sm" />
+                            <span>Edit</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                )}
-                
-                <div className="flex justify-end mt-4">
+                </>
+              )}
+
+              {/* 4. Only show empty state if not loading and actually empty */}
+              {filteredEmployees.length === 0 && (
+                <div className="bg-white rounded-xl p-8 text-center mt-4 shadow-sm">
+                  <p className="text-indigo-600">No employees found</p>
                   <button 
-                    onClick={() => handleEdit(emp)}
-                    className="text-indigo-600 hover:text-indigo-900 flex items-center gap-1 text-sm"
+                    onClick={handleAdd}
+                    className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
                   >
-                    <FaEdit className="text-sm" />
-                    <span>Edit</span>
+                    Add New Employee
                   </button>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {filteredEmployees.length === 0 && (
-            <div className="bg-white rounded-xl p-8 text-center mt-4 shadow-sm">
-              <p className="text-indigo-600">No employees found</p>
-              <button 
-                onClick={handleAdd}
-                className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition"
-              >
-                Add New Employee
-              </button>
-            </div>
+              )}
+            </>
           )}
         </>
       )}
