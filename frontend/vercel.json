@@ -1,5 +1,10 @@
+
 {
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://teamdock.onrender.com"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
