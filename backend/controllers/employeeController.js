@@ -31,7 +31,9 @@ exports.createEmployee = async (req, res) => {
 
 exports.getEmployees = async (req, res) => {
   try {
-    const employees = await User.find({ role: 'employee' }).select('-password');
+    const employees = await User.find({ 
+      role: { $in: ['employee', 'manager'] } 
+    }).select('-password');
     res.status(200).json(employees);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
@@ -41,7 +43,7 @@ exports.getEmployees = async (req, res) => {
 exports.getEmployee = async (req, res) => {
   try {
     const employee = await User.findById(req.params.id).select('-password');
-    if (!employee || employee.role !== 'employee') {
+    if (!employee || !['employee', 'manager'].includes(employee.role)) {
       return res.status(404).json({ message: 'Employee not found' });
     }
     res.status(200).json(employee);
@@ -55,7 +57,7 @@ exports.updateEmployee = async (req, res) => {
     const { name, email, position, department, role } = req.body;
     const employee = await User.findById(req.params.id);
 
-    if (!employee || employee.role !== 'employee') {
+    if (!employee || !['employee', 'manager'].includes(employee.role)) {
       return res.status(404).json({ message: 'Employee not found' });
     }
 
@@ -93,7 +95,7 @@ exports.updateEmployee = async (req, res) => {
 exports.deleteEmployee = async (req, res) => {
   try {
     const employee = await User.findById(req.params.id);
-    if (!employee || employee.role !== 'employee') {
+    if (!employee || !['employee', 'manager'].includes(employee.role)) {
       return res.status(404).json({ message: 'Employee not found' });
     }
 
